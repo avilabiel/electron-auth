@@ -1,0 +1,8 @@
+{
+  "name": "electron-auth",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/avilabiel/electron-auth.git",
+  "author": "Gabriel Ávila <avilabiel@gmail.com>",
+  "license": "MIT"
+}
