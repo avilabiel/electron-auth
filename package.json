@@ -23,6 +23,8 @@
     "electron-reloader": "^1.2.3"
   },
   "dependencies": {
+    "auth0-js": "^9.24.1",
+    "dotenv": "^16.4.5",
     "electron-squirrel-startup": "^1.0.0"
   }
 }

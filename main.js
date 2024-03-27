@@ -2,12 +2,19 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("node:path");
 
+const config = require("dotenv");
+config.config();
+
+let mainWindow;
+
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
       preload: path.join(__dirname, "preload.js"),
     },
     icon: path.join(__dirname, "logo.png"),
@@ -30,6 +37,35 @@ app.whenReady().then(() => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
+  app.on("ready", function () {
+    mainWindow = new BrowserWindow({});
+
+    mainWindow.webContents.on("will-navigate", function (event, navigationUrl) {
+      const parsedUrl = url.parse(navigationUrl);
+
+      if (
+        parsedUrl.host === "YOUR_CALLBACK_URL_HOST" &&
+        parsedUrl.path === "YOUR_CALLBACK_URL_PATH"
+      ) {
+        event.preventDefault();
+
+        webAuth.parseHash(
+          { hash: parsedUrl.hash },
+          function (error, authResult) {
+            if (error) {
+              console.error("Error parsing hash", error);
+            } else {
+              mainWindow.loadURL("file://" + __dirname + "/index.html");
+              console.log("Auth result:", authResult);
+            }
+          }
+        );
+      }
+    });
+
+    mainWindow.loadURL("file://" + __dirname + "/index.html");
   });
 });
 
