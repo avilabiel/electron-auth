@@ -1,6 +1,8 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("node:path");
+const AuthMicrosoftProvider = require("./authMicrosoftProvider");
+const authProvider = new AuthMicrosoftProvider();
 
 const config = require("dotenv");
 config.config();
@@ -14,7 +16,7 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
     },
     icon: path.join(__dirname, "logo.png"),
@@ -38,35 +40,6 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-
-  app.on("ready", function () {
-    mainWindow = new BrowserWindow({});
-
-    mainWindow.webContents.on("will-navigate", function (event, navigationUrl) {
-      const parsedUrl = url.parse(navigationUrl);
-
-      if (
-        parsedUrl.host === "YOUR_CALLBACK_URL_HOST" &&
-        parsedUrl.path === "YOUR_CALLBACK_URL_PATH"
-      ) {
-        event.preventDefault();
-
-        webAuth.parseHash(
-          { hash: parsedUrl.hash },
-          function (error, authResult) {
-            if (error) {
-              console.error("Error parsing hash", error);
-            } else {
-              mainWindow.loadURL("file://" + __dirname + "/index.html");
-              console.log("Auth result:", authResult);
-            }
-          }
-        );
-      }
-    });
-
-    mainWindow.loadURL("file://" + __dirname + "/index.html");
-  });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -74,6 +47,39 @@ app.whenReady().then(() => {
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+// Event handlers
+ipcMain.on("LOGIN", async () => {
+  const account = await authProvider.login();
+
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+
+  mainWindow.webContents.send("SHOW_WELCOME_MESSAGE", account);
+});
+
+ipcMain.on("LOGOUT", async () => {
+  await authProvider.logout();
+
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+});
+
+ipcMain.on("GET_PROFILE", async () => {
+  const tokenRequest = {
+    scopes: protectedResources.graphMe.scopes,
+  };
+
+  const tokenResponse = await authProvider.getToken(tokenRequest);
+  const account = authProvider.account;
+
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+
+  const graphResponse = await getGraphClient(tokenResponse.accessToken)
+    .api(protectedResources.graphMe.endpoint)
+    .get();
+
+  mainWindow.webContents.send("SHOW_WELCOME_MESSAGE", account);
+  mainWindow.webContents.send("SET_PROFILE", graphResponse);
 });
 
 // In this file you can include the rest of your app's specific main process
