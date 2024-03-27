@@ -6,7 +6,7 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: path.join(process.cwd(), "icon.ico"),
-    extraResource: [path.join(process.cwd(), "icon.ico")],
+    extraResource: [path.join(process.cwd(), "logo.png")],
   },
   rebuildConfig: {},
   makers: [
