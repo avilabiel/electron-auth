@@ -10,3 +10,4 @@ Let's try Electron Auth following [Electron documentation](https://www.electronj
 - Confirm Auto login
 - Confirm M365
 - Test rebranding prebuilt apps based on this [doc](https://www.electronjs.org/docs/latest/tutorial/application-distribution)
+- Signing Apps (Mac and Win)
