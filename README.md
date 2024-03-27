@@ -4,8 +4,9 @@ Let's try Electron Auth following [Electron documentation](https://www.electronj
 
 ## Goals
 
-- Implement new brand icons
-- Test Auth0 + Azure App
+- Implement new brand icons ✅
+- Test Auth0 + Azure App ✅
+- Sign in button Electron
 - Test MSAL
 - Test Java to discover IWA + Electron
 - Confirm Auto login
