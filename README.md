@@ -6,11 +6,12 @@ Let's try Electron Auth following [Electron documentation](https://www.electronj
 
 - Implement new brand icons ✅
 - Test Auth0 + Azure App ✅
-- Sign in button Electron
+- Sign in button Electron - Auth0 webAuth without approval from Admin
+- Sign in button Electron - Auth9 with Admin approval
 - Test MSAL
 - Test Java to discover IWA + Electron
-- Confirm Auto login
-- Confirm M365
+- Confirm Auto login without organization
+- Confirm Auth login with organization
 - Tray icon
 - Test rebranding prebuilt apps based on this [doc](https://www.electronjs.org/docs/latest/tutorial/application-distribution)
 - Signing Apps (Mac and Win)
