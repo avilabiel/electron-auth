@@ -1,9 +1,11 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, protocol } = require("electron");
 const path = require("node:path");
 const AuthMicrosoftProvider = require("./authMicrosoftProvider");
 const authProvider = new AuthMicrosoftProvider();
 const { shell } = require("electron");
+
+app.setAsDefaultProtocolClient("electron-auth");
 
 const config = require("dotenv");
 config.config();
@@ -36,10 +38,21 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 
+  // This will catch the custom protocol URL on Windows and Linux
+  if (process.platform !== "darwin") {
+    handleDeepLink(process.argv[1]);
+  }
+
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
+  // This will catch the custom protocol URL on macOS
+  app.on("open-url", function (event, url) {
+    event.preventDefault();
+    handleDeepLink(url);
   });
 });
 
@@ -49,6 +62,18 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
+
+function handleDeepLink(url) {
+  if (!mainWindow) {
+    return;
+  }
+
+  console.log("DEEEEEEP LINK", url);
+
+  // Here you can handle the URL, for example parse it and show
+  // different content in your Electron app
+  mainWindow.webContents.send("deep-link-url", url);
+}
 
 // Event handlers
 ipcMain.on("LOGIN", async () => {

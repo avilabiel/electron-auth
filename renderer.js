@@ -5,6 +5,10 @@ document.getElementById("btn-login").addEventListener("click", function () {
   window.renderer.sendLoginMessage();
 });
 
+document.getElementById("btn-sign-out").addEventListener("click", () => {
+  window.renderer.sendSignoutMessage();
+});
+
 window.renderer.showWelcomeMessage((event, account) => {
   console.log("Hey show welcome message event", account);
 
