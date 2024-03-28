@@ -38,6 +38,8 @@ class AuthMicrosoftProvider {
     this.clientApplication = new PublicClientApplication(this.msalConfig);
     this.cache = this.clientApplication.getTokenCache();
     this.account = null;
+
+    console.log("Auth Microsoft Provider", this);
   }
 
   async login() {
@@ -124,6 +126,7 @@ class AuthMicrosoftProvider {
 
       return authResponse;
     } catch (error) {
+      console.log("Error on getTokenInteractive =======", error);
       throw error;
     }
   }
@@ -139,6 +142,7 @@ class AuthMicrosoftProvider {
       this.account = await this.getAccount();
     }
 
+    console.log("Account =======", this.account);
     return this.account;
   }
 
