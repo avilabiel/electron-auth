@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("node:path");
 const AuthMicrosoftProvider = require("./authMicrosoftProvider");
 const authProvider = new AuthMicrosoftProvider();
+const { shell } = require("electron");
 
 const config = require("dotenv");
 config.config();
@@ -80,6 +81,12 @@ ipcMain.on("GET_PROFILE", async () => {
 
   mainWindow.webContents.send("SHOW_WELCOME_MESSAGE", account);
   mainWindow.webContents.send("SET_PROFILE", graphResponse);
+});
+
+ipcMain.on("OPEN_SIMPLE_AUTH0_URL", async () => {
+  const url = `https://${process.env.AUTH0_DOMAIN}/authorize?response_type=code&client_id=${process.env.AUTH0_CLIENT_ID}&redirect_uri=${process.env.AUTH0_CALLBACK_URL}`;
+
+  shell.openExternal(url);
 });
 
 // In this file you can include the rest of your app's specific main process

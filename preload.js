@@ -18,6 +18,9 @@ contextBridge.exposeInMainWorld("renderer", {
       func(event, ...args)
     );
   },
+  openSimpleAuth0Url: () => {
+    ipcRenderer.send("OPEN_SIMPLE_AUTH0_URL");
+  },
 });
 
 window.addEventListener("DOMContentLoaded", () => {

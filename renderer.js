@@ -15,3 +15,10 @@ window.renderer.showWelcomeMessage((event, account) => {
   signInButton.hidden = true;
   signOutButton.hidden = false;
 });
+
+document
+  .getElementById("btn-login-simple-url")
+  .addEventListener("click", function () {
+    console.log("Simple url button clicked");
+    window.renderer.openSimpleAuth0Url();
+  });
